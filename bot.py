@@ -56,8 +56,8 @@ reply_markup_game = ReplyKeyboardMarkup.from_column(buttons)
 reply_markup_ready = ReplyKeyboardMarkup.from_column(ready_button)
 
 
-def pretty_turn(turn, context):
-    return "{} -> {}".format(context.bot_data["username" + str(turn[0])], context.bot_data["username" + str(turn[1])])
+def pretty_turn(turn, words_in_hat, context):
+    return texts.before_turn_message.format(context.bot_data["username" + str(turn[0])], context.bot_data["username" + str(turn[1])], words_in_hat)
 
 
 def handle_timer(context, room, timer, message):
@@ -140,11 +140,11 @@ def continue_turn(update, context):
     elif text == "ошибка :(":
         context.bot_data["abort_timer_message" + room] = text
         turn = context.bot_data["round" + room].failed(user_id)
-        reply = pretty_turn(turn, context)
+        reply = pretty_turn(turn, hat.words_in_hat(room), context)
     elif text == "всё.":
         context.bot_data["abort_timer_message" + room] = text
         turn = context.bot_data["round" + room].time_ran_out(user_id)
-        reply = pretty_turn(turn, context)
+        reply = pretty_turn(turn, hat.words_in_hat(room), context)
 
     for user in context.bot_data["room" + room]:
         if user == turn[0]:
@@ -307,7 +307,7 @@ def start_round(room, context):
         if "timer" + room in context.bot_data:
             context.bot_data["round" + room].timer = context.bot_data["timer" + room]
         turn = context.bot_data["round" + room].start_game()
-        reply += pretty_turn(turn, context)
+        reply += pretty_turn(turn, hat.words_in_hat(room), context)
     for user in context.bot_data["room" + room]:
         reply_markup = None
         if user == turn[0]:
