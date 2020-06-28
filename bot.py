@@ -177,13 +177,7 @@ def echo(update, context):
         update.message.reply_text(reply)
         return
     if "removeword" in context.user_data and context.user_data["removeword"]:
-        status = hat.remove_word(text, room)
-        if status:
-            reply = texts.removed_word_message
-        else:
-            reply = texts.not_removed_word_message
-        context.user_data["removeword"] = False
-        update.message.reply_text(reply)
+        process_removeword(context, room, text, update)
         return
     reply = None
     if room:
@@ -207,6 +201,21 @@ def echo(update, context):
         else:
             reply = texts.no_such_rooms_message
     update.message.reply_text(reply, reply_markup=reply_markup)
+
+
+def process_removeword(context, room, text, update):
+    if text == "!all":
+        removed_count = 0
+        while hat.get_word(room) is not None:
+            removed_count += 1
+        reply = texts.removed_words_message.format(removed_count)
+    else:
+        if hat.remove_word(text, room):
+            reply = texts.removed_word_message
+        else:
+            reply = texts.not_removed_word_message
+    context.user_data["removeword"] = False
+    update.message.reply_text(reply)
 
 
 def add_single_or_multiple_words(room, user_id, words):
