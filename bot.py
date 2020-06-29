@@ -204,7 +204,7 @@ def echo(update, context):
 
 
 def process_removeword(context, room, text, update):
-    if text == "!all":
+    if text == texts.remove_all_words_subcommand:
         removed_count = 0
         while hat.get_word(room) is not None:
             removed_count += 1
@@ -266,7 +266,7 @@ def removeword(update, context):
     room = game.room_for_player(user_id)
     if room:
         context.user_data["removeword"] = True
-        update.message.reply_text(texts.please_remove_word_message)
+        update.message.reply_text(texts.please_remove_word_message.format(texts.remove_all_words_subcommand))
     else:
         update.message.reply_text(texts.no_remove_from_hall_message)
 

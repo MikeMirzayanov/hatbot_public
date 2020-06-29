@@ -1,5 +1,6 @@
 import sqlite3
 import random
+import texts
 
 from sqlite3 import Error
 
@@ -75,6 +76,9 @@ def check_word(word):
         return True
 
     if not len(word):
+        return False
+
+    if word in texts.forbidden_words:
         return False
 
     return check_rus(word) or check_en(word)
